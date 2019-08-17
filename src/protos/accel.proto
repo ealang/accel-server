@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package accel;
+
+service Accel {
+  rpc GetConfig(GetConfigRequest) returns (GetConfigReply) {}
+  rpc Subscribe(SubscribeRequest) returns (stream SubscribeReply) {}
+}
+
+message SensorConfig {
+  uint32 sample_rate_hz = 1;
+  uint32 buffer_size = 2;
+  uint32 max_sample_value = 3;
+  map<uint32, string> sensor_id_to_name = 4;
+}
+
+message GetConfigRequest {}
+
+message GetConfigReply {
+  SensorConfig config = 1;
+}
+
+message SubscriptionParameters {
+}
+
+message SubscribeRequest {
+  SubscriptionParameters parameters = 1;
+}
+
+message AccelSample {
+  uint32 sensor_id = 1;
+  uint32 sequence_num = 2;
+  uint32 time_ms = 3;
+  repeated uint32 data = 4;
+}
+
+message SubscribeReply {
+  repeated AccelSample samples = 1;
+}
