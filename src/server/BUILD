@@ -6,5 +6,6 @@ cc_binary(
     ],
     deps = [
         "//src/server/service:service",
+        "@com_github_google_glog//:glog",
     ],
 )

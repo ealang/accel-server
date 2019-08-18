@@ -1,3 +1,4 @@
+#include <glog/logging.h>
 #include "src/server/service/subscription_state.hh"
 
 using namespace accel;
@@ -18,13 +19,11 @@ void SubscriptionState::pushSample(const AccelSample& sample) {
 
   bufferIsComplete = bufferIsComplete || computeBufferIsComplete();
   if (bufferIsComplete) {
-    printf("driver: buffer is now complete\n");
     cv.notify_one();
  }
 }
 
 vector<AccelSample> SubscriptionState::resetBuffer() {
-  printf("client: got data, resetting buffer\n");
   clearCounts();
   vector<AccelSample> samplesTmp = move(samples);
   samples = vector<AccelSample>();
@@ -58,7 +57,6 @@ SubscriptionState::~SubscriptionState() {
 }
 
 vector<AccelSample> SubscriptionState::wait() {
-  printf("client: waiting for data\n");
   unique_lock<mutex> guard(lock);
   cv.wait(guard, [this] {
     return bufferIsComplete;

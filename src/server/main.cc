@@ -1,3 +1,4 @@
+#include <glog/logging.h>
 #include <memory>
 #include "src/server/sensor/sensor_collection.hh"
 #include "src/server/sensor/sensor.hh"
@@ -7,6 +8,11 @@ using namespace grpc;
 using namespace std;
 
 int main(int argc, char** argv) {
+  // Initialize Google's logging library.
+  google::InitGoogleLogging(argv[0]);
+  google::LogToStderr();
+  gflags::ParseCommandLineFlags(&argc, &argv, true);
+
   string server_address("0.0.0.0:50051");
 
   unique_ptr<Sensor> sensor1 = make_unique<Sensor>(100);

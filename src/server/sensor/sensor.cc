@@ -1,4 +1,5 @@
 #include <unistd.h>
+#include <glog/logging.h>
 
 #include "src/server/sensor/config.hh"
 #include "src/server/sensor/sensor.hh"
@@ -18,7 +19,6 @@ class SensorPublisher: public Publisher<const AccelSample&> {
 
   public:
     int subscribe(function<void(const AccelSample&)> callback) override {
-      printf("client: subscribing to sensor\n");
       lock_guard<mutex> guard(lock);
       int id = nextId++;
       subs.emplace(id, callback);
@@ -31,7 +31,6 @@ class SensorPublisher: public Publisher<const AccelSample&> {
     void publish(const AccelSample& sample) {
       lock_guard<mutex> guard(lock);
       for (auto& sub: subs) {
-        printf("driver: publishing to client\n");
         sub.second(sample);
       }
     }
@@ -54,7 +53,7 @@ Sensor::~Sensor() {
 }
 
 void Sensor::pollLoop() {
-  printf("starting sensor thread %d\n", sensorId);
+  LOG(INFO) << "Starting sensor thread " << sensorId;
   uint32_t seqNum = 0;
   while (!threadExit.load()) {
     AccelSample sample;
@@ -70,7 +69,7 @@ void Sensor::pollLoop() {
       static_cast<uint32_t>(1e6 / SAMPLE_RATE_HZ)
     );
   }
-  printf("exiting sensor thread %d\n", sensorId);
+  LOG(INFO) << "Exiting sensor thread " << sensorId;
 }
 
 void Sensor::stop() {

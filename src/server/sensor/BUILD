@@ -16,6 +16,7 @@ cc_library(
   ],
   deps = [
     "//src/protos:accel_grpc_lib",
+    "@com_github_google_glog//:glog",
   ],
   visibility = [
     "//src/server:__subpackages__",
