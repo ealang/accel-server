@@ -3,6 +3,7 @@
 #include "src/server/sensor/sensor_collection.hh"
 #include "src/server/sensor/sensor.hh"
 #include "src/server/service/accel_service_impl.hh"
+#include "src/lis3dh-driver-ifc/lis3dh-spi-dev.hh"
 
 using namespace grpc;
 using namespace std;
@@ -12,6 +13,9 @@ int main(int argc, char** argv) {
   google::InitGoogleLogging(argv[0]);
   google::LogToStderr();
   gflags::ParseCommandLineFlags(&argc, &argv, true);
+
+  uint32_t maxSpeedHz = 10'1000'1000;
+  int spiDevice = openSpiDeviceForLis3dh("/dev/spidev0.0", maxSpeedHz);
 
   string server_address("0.0.0.0:50051");
 
@@ -36,6 +40,8 @@ int main(int argc, char** argv) {
   // Wait for the server to shutdown. Note that some other thread must be
   // responsible for shutting down the server for this call to ever return.
   server->Wait();
+
+  closeSpiDevice(spiDevice);
 
   return 0;
 }

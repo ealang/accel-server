@@ -15,5 +15,5 @@ cc_grpc_library(
     srcs = ["//src/protos:protos"],
     grpc_only = True,
     deps = [":accel_proto_lib"],
-    visibility = ["//visibility:public"],
+  visibility = ["//src:__subpackages__"]
 )

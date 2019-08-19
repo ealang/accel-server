@@ -31,7 +31,7 @@ message AccelSample {
   uint32 sensor_id = 1;
   uint32 sequence_num = 2;
   uint32 time_ms = 3;
-  repeated uint32 data = 4;
+  repeated int32 data = 4;
 }
 
 message SubscribeReply {

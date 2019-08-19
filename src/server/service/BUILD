@@ -2,9 +2,11 @@ cc_library(
   name = "service",
   srcs = [
     "accel_service_impl.cc",
-    "accel_service_impl.hh",
     "subscription_state.cc",
     "subscription_state.hh",
+  ],
+  hdrs = [
+    "accel_service_impl.hh",
   ],
   deps = [
     "//src/protos:accel_grpc_lib",

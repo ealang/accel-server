@@ -5,8 +5,6 @@ cc_library(
     "publisher.hh",
     "sensor.cc",
     "sensor_collection.cc",
-    "sensor_collection.hh",
-    "sensor.hh",
     "util.cc",
     "util.hh",
   ],
