@@ -5,9 +5,7 @@ using namespace accel;
 using namespace std;
 
 void SubscriptionState::clearCounts() {
-  for (auto id: sensors.sensorIds()) {
-    perSensorSampleCount[id] = 0;
-  }
+  perSensorSampleCount.clear();
 }
 
 void SubscriptionState::pushSample(const AccelSample& sample) {
@@ -32,28 +30,30 @@ vector<AccelSample> SubscriptionState::resetBuffer() {
 }
 
 bool SubscriptionState::computeBufferIsComplete() {
-  auto& sensorIds = sensors.sensorIds();
-  return all_of(
-    sensorIds.begin(),
-    sensorIds.end(),
-    [this](uint32_t sensorId) {
-      return perSensorSampleCount[sensorId] > 0;
+  return perSensorSampleCount.size() == numSensors && all_of(
+    perSensorSampleCount.begin(),
+    perSensorSampleCount.end(),
+    [this](auto& pair) {
+      return pair.second > 0;
     }
   );
 }
 
 SubscriptionState::SubscriptionState(
+  uint32_t numSensors,
   SubscriptionParameters params,
-  SensorCollection& sensors
-): sensors(sensors) {
-  clearCounts();
-  subscription = sensors.subscribeAll([this](const AccelSample& sample) {
+  SensorPublisherRef sensorPublisher
+): numSensors(numSensors), sensorPublisher(sensorPublisher) {
+
+  subscription = sensorPublisher->subscribe([this](const AccelSample& sample) {
     pushSample(sample);
   });
+
+  clearCounts();
 }
 
 SubscriptionState::~SubscriptionState() {
-  sensors.unsubscribeAll(subscription);
+  sensorPublisher->unsubscribe(subscription);
 }
 
 vector<AccelSample> SubscriptionState::wait() {

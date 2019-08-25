@@ -1,19 +1,15 @@
 #pragma once
 
 #include <condition_variable>
-#include <vector>
+#include "src/server/sensor/sensor_publisher_ref.hh"
 
-#include "src/server/sensor/sensor_collection.hh"
-
-class SensorCollection;
-
-/* Manage the state associated with a GRPC client subscription to
- * accelerometer data. Receives and buffers data from sensor
- * subscriptions.
- */
+// Manage the state associated with a GRPC client subscription to
+// accelerometer data. Receives and buffers data from sensor
+// subscription.
 class SubscriptionState {
-  SensorCollectionSubscription subscription;
-  SensorCollection& sensors;
+  uint32_t numSensors;
+  uint32_t subscription;
+  SensorPublisherRef sensorPublisher;
 
   std::mutex lock;
   std::condition_variable cv;
@@ -29,8 +25,9 @@ class SubscriptionState {
 
 public:
   SubscriptionState (
+    uint32_t numSensors,
     accel::SubscriptionParameters params,
-    SensorCollection& sensors
+    SensorPublisherRef sensorPublisher
   );
   virtual ~SubscriptionState ();
 

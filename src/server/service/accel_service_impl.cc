@@ -1,24 +1,21 @@
 #include <glog/logging.h>
-#include "src/server/sensor/sensor_collection.hh"
 #include "src/server/service/accel_service_impl.hh"
 #include "src/server/service/subscription_state.hh"
 
 using namespace accel;
 using namespace grpc;
-using namespace std;
 
 AccelServiceImpl::AccelServiceImpl(
-  SensorCollection& sensors
-): sensors(sensors) {}
+  SensorPublisherRef sensorPublisher,
+  SensorConfig config
+): sensorPublisher(sensorPublisher), config(config) {}
 
 Status AccelServiceImpl::GetConfig(
     ServerContext* context,
     const GetConfigRequest* request,
     GetConfigReply* reply
 ) {
-  reply->mutable_config()->CopyFrom(
-    sensors.sensorConfig()
-  );
+  reply->mutable_config()->CopyFrom(config);
   return Status::OK;
 }
 
@@ -28,7 +25,11 @@ Status AccelServiceImpl::Subscribe(
     ServerWriter<SubscribeReply> *writer
 ) {
 
-  SubscriptionState sub(request->parameters(), sensors);
+  SubscriptionState sub(
+    config.sensor_id_to_name_size(),
+    request->parameters(),
+    sensorPublisher
+  );
   DLOG(INFO) << "New subscriber client";
 
   while (!context->IsCancelled()) {

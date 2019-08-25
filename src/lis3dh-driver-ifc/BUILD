@@ -4,6 +4,9 @@ cc_library(
     "lis3dh-spi-dev.hh",
     "lis3dh-spi.hh",
   ],
+  srcs = [
+    "lis3dh-spi.cc"
+  ],
   visibility = [
     "//src:__subpackages__",
   ]

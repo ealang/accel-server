@@ -1,19 +1,18 @@
 cc_library(
   name = "sensor",
   srcs = [
-    "config.hh",
     "publisher.hh",
-    "sensor.cc",
-    "sensor_collection.cc",
+    "sensor_thread.cc",
     "util.cc",
     "util.hh",
   ],
   hdrs = [
-    "sensor_collection.hh",
-    "sensor.hh",
+    "sensor_thread.hh",
+    "sensor_publisher_ref.hh",
   ],
   deps = [
     "//src/protos:accel_grpc_lib",
+    "//src/lis3dh-driver-ifc:lis3dh-driver-ifc",
     "@com_github_google_glog//:glog",
   ],
   visibility = [

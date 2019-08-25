@@ -16,6 +16,14 @@ Lis3dhStatus lis3dh_status(int fd, int selectPin) {
   };
 }
 
+static int16_t randomReading() {
+  return rand() % MAX_ACCEL_VAL_HIGHRES;
+}
+
 Accel3 lis3dh_sample_accel(int fd, int selectPin) {
-  return { 0, 0, 0 };
+  return {
+    randomReading(),
+    randomReading(),
+    randomReading()
+  };
 }

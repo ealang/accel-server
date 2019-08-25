@@ -13,6 +13,8 @@ struct Lis3dhStatus {
   bool data_available;
 };
 
+constexpr uint32_t MAX_ACCEL_VAL_HIGHRES = ((1 << 15) - 1) & ~0xF;
+
 constexpr uint32_t LIS3DH_SAMPLE_RATE_1HZ = 0b1;
 constexpr uint32_t LIS3DH_SAMPLE_RATE_10HZ = 0b10;
 constexpr uint32_t LIS3DH_SAMPLE_RATE_25HZ = 0b11;
@@ -20,6 +22,11 @@ constexpr uint32_t LIS3DH_SAMPLE_RATE_50HZ = 0b100;
 constexpr uint32_t LIS3DH_SAMPLE_RATE_100HZ = 0b101;
 constexpr uint32_t LIS3DH_SAMPLE_RATE_200HZ = 0b110;
 constexpr uint32_t LIS3DH_SAMPLE_RATE_400HZ = 0b111;
+
+/**
+ * Convert from Hz to sample rate flag.
+ */
+uint32_t sampleRateFlag(uint32_t sampleRateHz);
 
 /**
  * Write values to the lis3dh registers to initialize it.

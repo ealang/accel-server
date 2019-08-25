@@ -2,15 +2,16 @@
 
 #include <grpcpp/grpcpp.h>
 #include "src/protos/accel.grpc.pb.h"
-
-class SensorCollection;
+#include "src/server/sensor/sensor_publisher_ref.hh"
 
 class AccelServiceImpl final: public accel::Accel::Service {
-  SensorCollection& sensors;
+  SensorPublisherRef sensorPublisher;
+  const accel::SensorConfig config;
 public:
 
   AccelServiceImpl(
-    SensorCollection& sensors
+    SensorPublisherRef sensorPublisher,
+    accel::SensorConfig config
   );
 
   grpc::Status GetConfig(
