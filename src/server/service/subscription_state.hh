@@ -7,7 +7,7 @@
 // accelerometer data. Receives and buffers data from sensor
 // subscription.
 class SubscriptionState {
-  uint32_t numSensors;
+  const uint32_t numSensors;
   uint32_t subscription;
   SensorPublisherRef sensorPublisher;
 

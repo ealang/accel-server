@@ -24,16 +24,22 @@ HardwareConfig sensorDefinitions[2] = {
 
 // Initialize sensors and SPI device
 int hardwareInit(uint32_t sampleRateHz) {
-  uint32_t maxSpeedHz = 10'1000'1000;
+  initializeDriver();
+
+  for (const auto& sensor: sensorDefinitions) {
+    initializeChipSelectPin(sensor.selectPin);
+  }
+
+  uint32_t maxSpeedHz = 20'000'000;
   int spiDevice = openSpiDeviceForLis3dh("/dev/spidev0.0", maxSpeedHz);
 
   for (const auto& sensor: sensorDefinitions) {
-    lis3dh_initialize(
+    lis3dhSelfCheck(spiDevice, sensor.selectPin);
+    lis3dhInitialize(
       spiDevice,
       sensor.selectPin,
       sampleRateFlag(sampleRateHz)
     );
-    lis3dh_self_check(spiDevice, sensor.selectPin);
   }
   return spiDevice;
 }
@@ -69,7 +75,7 @@ int main(int argc, char** argv) {
   google::LogToStderr();
   gflags::ParseCommandLineFlags(&argc, &argv, true);
 
-  uint32_t sampleRateHz = 1;
+  uint32_t sampleRateHz = 25;
   int spiDevice = hardwareInit(sampleRateHz);
   accel::SensorConfig cfg = makeSensorConfig(sampleRateHz);
   unique_ptr<SensorThread> sensorThread = makeSensorPollThread(spiDevice, sampleRateHz);

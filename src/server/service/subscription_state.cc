@@ -48,8 +48,6 @@ SubscriptionState::SubscriptionState(
   subscription = sensorPublisher->subscribe([this](const AccelSample& sample) {
     pushSample(sample);
   });
-
-  clearCounts();
 }
 
 SubscriptionState::~SubscriptionState() {

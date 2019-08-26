@@ -2,4 +2,4 @@
 
 #include <cstdint>
 
-uint32_t time_ms();
+uint32_t timeMs();

@@ -61,27 +61,35 @@ void SensorThread::pollLoop() {
     sensorSequenceNums[sensor.first] = 0;
   }
 
+  uint32_t sleepTime = static_cast<uint32_t>(1e6 / sampleRateHz) / 4;
+
+  bool firstPoll = true;
   while (!threadExit.load()) {
     for (auto& sensor: sensorIdToSelectPin) {
-      uint32_t sensorId = sensor.first;
       uint32_t selectPin = sensor.second;
-      uint32_t seqNum = sensorSequenceNums[sensorId]++;
 
-      AccelSample result;
-      result.set_sensor_id(sensorId);
-      result.set_sequence_num(seqNum);
+      Lis3dhStatus status = lis3dhStatus(sensorDevice, selectPin);
+      LOG_IF(WARNING, status.overrun && !firstPoll) << "Sensor pin " << selectPin << " poll error";
 
-      auto sample = lis3dh_sample_accel(sensorDevice, selectPin);
-      result.add_data(static_cast<float>(sample.x) / MAX_ACCEL_VAL_HIGHRES);
-      result.add_data(static_cast<float>(sample.y) / MAX_ACCEL_VAL_HIGHRES);
-      result.add_data(static_cast<float>(sample.z) / MAX_ACCEL_VAL_HIGHRES);
+      if (status.dataAvailable) {
+        uint32_t sensorId = sensor.first;
+        uint32_t seqNum = sensorSequenceNums[sensorId]++;
+        AccelSample result;
+        result.set_sensor_id(sensorId);
+        result.set_sequence_num(seqNum);
+        result.set_time_ms(timeMs());
 
-      _publisher->publish(result);
+        auto sample = lis3dhSampleAccel(sensorDevice, selectPin);
+        result.add_data(static_cast<float>(sample.x) / MAX_ACCEL_VAL_HIGHRES);
+        result.add_data(static_cast<float>(sample.y) / MAX_ACCEL_VAL_HIGHRES);
+        result.add_data(static_cast<float>(sample.z) / MAX_ACCEL_VAL_HIGHRES);
+
+        _publisher->publish(result);
+      }
     }
 
-    usleep(
-      static_cast<uint32_t>(1e6 / sampleRateHz)
-    );
+    usleep(sleepTime);
+    firstPoll = false;
   }
   LOG(INFO) << "Exiting sensor thread";
 }

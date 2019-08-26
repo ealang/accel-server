@@ -10,7 +10,7 @@ struct Lis3dhStatus {
   // data is not being read fast enough
   bool overrun;
   // data is available to bool
-  bool data_available;
+  bool dataAvailable;
 };
 
 constexpr uint32_t MAX_ACCEL_VAL_HIGHRES = ((1 << 15) - 1) & ~0xF;
@@ -31,19 +31,19 @@ uint32_t sampleRateFlag(uint32_t sampleRateHz);
 /**
  * Write values to the lis3dh registers to initialize it.
  */
-void lis3dh_initialize(int fd, int selectPin, uint8_t sample_rate_flags);
+void lis3dhInitialize(int fd, uint32_t selectPin, uint8_t sampleRateFlags);
 
 /**
  * Test if we can communicate with the lis3dh.
  */
-void lis3dh_self_check(int fd, int selectPin);
+void lis3dhSelfCheck(int fd, uint32_t selectPin);
 
 /**
  * Check data status of the device.
  */
-Lis3dhStatus lis3dh_status(int fd, int selectPin);
+Lis3dhStatus lis3dhStatus(int fd, uint32_t selectPin);
 
 /**
  * Take an acceleration sample.
  */
-Accel3 lis3dh_sample_accel(int fd, int selectPin);
+Accel3 lis3dhSampleAccel(int fd, uint32_t selectPin);

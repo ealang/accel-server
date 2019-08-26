@@ -20,4 +20,7 @@ cc_binary(
         "//src/lis3dh-driver:lis3dh-driver",
         "@com_github_google_glog//:glog",
     ],
+    linkopts = [
+      "-lwiringPi"
+    ],
 )

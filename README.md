@@ -12,7 +12,13 @@ Project to stream LIS3DH accelerometer data from a raspi.
 
 ## Building
 
-The build system for this project is Bazel. It has been tested with Bazel 0.28.
+The build system for this project is Bazel. It has been tested with Bazel 0.28.1.
+
+To compile on the raspi, wiringpi is required:
+
+```
+sudo apt-get install wiringpi
+```
 
 Build the server:
 
@@ -20,7 +26,7 @@ Build the server:
 bazel build //src/server:server
 ```
 
-Build a server with a fake driver:
+Build a server with a fake driver (handy for off-target testing):
 
 ```shell
 bazel build //src/server:fakeserver
@@ -28,6 +34,7 @@ bazel build //src/server:fakeserver
 
 ## TODO
 
-- Implement real driver
 - Max buffer size for subscription
+- Subscription framing options
 - Stop polling if there are no clients
+- Runtime configurable sensor settings

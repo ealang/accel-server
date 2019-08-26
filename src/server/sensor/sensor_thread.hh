@@ -10,12 +10,12 @@ class SensorPublisher;
 
 // Thread that can poll and publish samples from multiple accelerometers
 class SensorThread {
-  int sensorDevice;
-  uint32_t sampleRateHz;
+  const int sensorDevice;
+  const uint32_t sampleRateHz;
   std::shared_ptr<SensorPublisher> _publisher;
   std::thread pollThread;
   std::atomic<bool> threadExit;
-  std::unordered_map<uint32_t, uint32_t> sensorIdToSelectPin;
+  const std::unordered_map<uint32_t, uint32_t> sensorIdToSelectPin;
 
   void pollLoop();
 
