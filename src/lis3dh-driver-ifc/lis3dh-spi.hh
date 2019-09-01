@@ -3,7 +3,7 @@
 #include <cstdint>
 
 struct Accel3 {
-  int16_t x, y, z;
+  float x, y, z;
 };
 
 struct Lis3dhStatus {
@@ -12,8 +12,6 @@ struct Lis3dhStatus {
   // data is available to bool
   bool dataAvailable;
 };
-
-constexpr uint32_t MAX_ACCEL_VAL_HIGHRES = ((1 << 15) - 1) & ~0xF;
 
 constexpr uint32_t LIS3DH_SAMPLE_RATE_1HZ = 0b1;
 constexpr uint32_t LIS3DH_SAMPLE_RATE_10HZ = 0b10;

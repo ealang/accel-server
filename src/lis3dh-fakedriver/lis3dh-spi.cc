@@ -15,8 +15,8 @@ Lis3dhStatus lis3dhStatus(int fd, uint32_t selectPin) {
   };
 }
 
-static int16_t randomReading() {
-  return rand() % MAX_ACCEL_VAL_HIGHRES;
+static float randomReading() {
+  return rand() / static_cast<float>(RAND_MAX);
 }
 
 Accel3 lis3dhSampleAccel(int fd, uint32_t selectPin) {

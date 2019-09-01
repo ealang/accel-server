@@ -12,8 +12,9 @@ constexpr uint32_t READ_OP = 0x80;
 constexpr uint32_t READ_AUTO_INC_OP = READ_OP | 0x40;
 
 // hard-coded scale setting
-constexpr uint32_t SCALE = 2;
+constexpr int32_t SCALE = 2;
 constexpr uint32_t CTRL_REG1_SCALE_FLAG = 0;  // ±2g
+constexpr uint32_t MAX_ACCEL_VAL_HIGHRES = ((1 << 15) - 1) & ~0xF;
 
 static void transaction(int fd, uint32_t selectPin, uint8_t *tx, uint32_t size, uint8_t *rx) {
   spi_ioc_transfer tr = {
@@ -54,7 +55,7 @@ static uint16_t readReg16(int fd, uint32_t selectPin, uint8_t reg) {
     static_cast<uint8_t>(reg | READ_AUTO_INC_OP), 0, 0
   };
   transaction(fd, selectPin, tx, 3, rx);
-  return (uint16_t)rx[1] | (uint16_t)rx[2] << 8;
+  return static_cast<uint16_t>(rx[1]) | static_cast<uint16_t>(rx[2]) << 8;
 }
 
 void lis3dhInitialize(int fd, uint32_t selectPin, uint8_t sampleRateFlags) {
@@ -84,10 +85,20 @@ Lis3dhStatus lis3dhStatus(int fd, uint32_t selectPin) {
   };
 }
 
+static float accelToFloat(uint16_t accel) {
+  return static_cast<float>(
+      static_cast<int16_t>(accel)
+  ) / MAX_ACCEL_VAL_HIGHRES * SCALE;
+}
+
+static float accelFromReg(int fd, int selectPin, uint8_t reg) {
+  return accelToFloat(readReg16(fd, selectPin, reg));
+}
+
 Accel3 lis3dhSampleAccel(int fd, uint32_t selectPin) {
   return {
-    static_cast<int16_t>(readReg16(fd, selectPin, LIS3DH_OUT_X_L) * SCALE),
-    static_cast<int16_t>(readReg16(fd, selectPin, LIS3DH_OUT_Y_L) * SCALE),
-    static_cast<int16_t>(readReg16(fd, selectPin, LIS3DH_OUT_Z_L) * SCALE)
+    accelFromReg(fd, selectPin, LIS3DH_OUT_X_L),
+    accelFromReg(fd, selectPin, LIS3DH_OUT_Y_L),
+    accelFromReg(fd, selectPin, LIS3DH_OUT_Z_L),
   };
 }

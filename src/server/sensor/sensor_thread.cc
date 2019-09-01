@@ -80,9 +80,9 @@ void SensorThread::pollLoop() {
         result.set_time_ms(timeMs());
 
         auto sample = lis3dhSampleAccel(sensorDevice, selectPin);
-        result.add_data(static_cast<float>(sample.x) / MAX_ACCEL_VAL_HIGHRES);
-        result.add_data(static_cast<float>(sample.y) / MAX_ACCEL_VAL_HIGHRES);
-        result.add_data(static_cast<float>(sample.z) / MAX_ACCEL_VAL_HIGHRES);
+        result.add_data(sample.x);
+        result.add_data(sample.y);
+        result.add_data(sample.z);
 
         _publisher->publish(result);
       }
