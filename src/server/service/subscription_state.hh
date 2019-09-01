@@ -8,7 +8,8 @@
 // subscription.
 class SubscriptionState {
   const uint32_t numSensors;
-  uint32_t subscription;
+  uint32_t sensorSubscriptionId;
+  const accel::SubscriptionParameters clientParams;
   SensorPublisherRef sensorPublisher;
 
   std::mutex lock;
@@ -21,12 +22,12 @@ class SubscriptionState {
 
   void pushSample(const accel::AccelSample& sample);
   std::vector<accel::AccelSample> resetBuffer();
-  bool computeBufferIsComplete();
+  bool computeBufferIsComplete() const;
 
 public:
   SubscriptionState (
-    uint32_t numSensors,
-    accel::SubscriptionParameters params,
+    const uint32_t numSensors,
+    const accel::SubscriptionParameters& clientParams,
     SensorPublisherRef sensorPublisher
   );
   virtual ~SubscriptionState ();

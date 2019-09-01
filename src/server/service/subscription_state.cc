@@ -33,29 +33,36 @@ vector<AccelSample> SubscriptionState::resetBuffer() {
   return samplesTmp;
 }
 
-bool SubscriptionState::computeBufferIsComplete() {
+bool SubscriptionState::computeBufferIsComplete() const {
+  const uint32_t perSensorBatchSize = min(
+    clientParams.per_sensor_batch_size(),
+    maxPerSensorSampleCount
+  );
+
   return perSensorSampleCount.size() == numSensors && all_of(
     perSensorSampleCount.begin(),
     perSensorSampleCount.end(),
-    [this](auto& pair) {
-      return pair.second > 0;
+    [this, &perSensorBatchSize](auto& pair) {
+      return pair.second >= perSensorBatchSize;
     }
   );
 }
 
 SubscriptionState::SubscriptionState(
-  uint32_t numSensors,
-  SubscriptionParameters params,
+  const uint32_t numSensors,
+  const SubscriptionParameters& clientParams,
   SensorPublisherRef sensorPublisher
-): numSensors(numSensors), sensorPublisher(sensorPublisher) {
+): numSensors(numSensors),
+   clientParams(clientParams),
+   sensorPublisher(sensorPublisher) {
 
-  subscription = sensorPublisher->subscribe([this](const AccelSample& sample) {
+  sensorSubscriptionId = sensorPublisher->subscribe([this](const AccelSample& sample) {
     pushSample(sample);
   });
 }
 
 SubscriptionState::~SubscriptionState() {
-  sensorPublisher->unsubscribe(subscription);
+  sensorPublisher->unsubscribe(sensorSubscriptionId);
 }
 
 vector<AccelSample> SubscriptionState::wait() {

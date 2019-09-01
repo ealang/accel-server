@@ -31,8 +31,3 @@ Build a server with a fake driver (handy for off-target testing):
 ```shell
 bazel build //src/server:fakeserver
 ```
-
-## TODO
-
-- Subscription framing options
-- Stop polling if there are no clients

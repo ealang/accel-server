@@ -9,16 +9,19 @@ service Accel {
 
 message SensorConfig {
   uint32 sample_rate_hz = 1;
-  map<uint32, string> sensor_id_to_name = 4;
+  map<uint32, string> sensor_id_to_name = 2;
 }
 
-message GetConfigRequest {}
+message GetConfigRequest {
+}
 
 message GetConfigReply {
   SensorConfig config = 1;
 }
 
 message SubscriptionParameters {
+  // Num samples required per sensor before data is transmitted
+  uint32 per_sensor_batch_size = 1;
 }
 
 message SubscribeRequest {
