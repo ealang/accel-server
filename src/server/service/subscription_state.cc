@@ -4,6 +4,8 @@
 using namespace accel;
 using namespace std;
 
+constexpr uint32_t maxPerSensorSampleCount = 10 * 1024;
+
 void SubscriptionState::clearCounts() {
   perSensorSampleCount.clear();
 }
@@ -12,13 +14,15 @@ void SubscriptionState::pushSample(const AccelSample& sample) {
   lock_guard<mutex> guard(lock);
 
   uint32_t sensorId = sample.sensor_id();
-  perSensorSampleCount[sensorId] += 1;
-  samples.emplace_back(sample);
+  if (perSensorSampleCount[sensorId] < maxPerSensorSampleCount) {
+    perSensorSampleCount[sensorId] += 1;
+    samples.emplace_back(sample);
+  }
 
   bufferIsComplete = bufferIsComplete || computeBufferIsComplete();
   if (bufferIsComplete) {
     cv.notify_one();
- }
+  }
 }
 
 vector<AccelSample> SubscriptionState::resetBuffer() {

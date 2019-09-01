@@ -34,6 +34,5 @@ bazel build //src/server:fakeserver
 
 ## TODO
 
-- Max buffer size for subscription
 - Subscription framing options
 - Stop polling if there are no clients
