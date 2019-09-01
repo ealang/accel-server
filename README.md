@@ -37,4 +37,3 @@ bazel build //src/server:fakeserver
 - Max buffer size for subscription
 - Subscription framing options
 - Stop polling if there are no clients
-- Runtime configurable sensor settings

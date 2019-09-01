@@ -1,0 +1,17 @@
+{
+  "spi-device": "/dev/spidev0.0",
+  "spi-bus-rate-mhz": 20,
+  "sensor-sample-rate-hz": 25,
+  "sensors": [
+    {
+      "name": "sensor1",
+      "sensor-id": 100,
+      "select-pin": 8
+    },
+    {
+      "name": "sensor2",
+      "sensor-id": 101,
+      "select-pin": 9
+    }
+  ]
+}

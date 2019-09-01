@@ -1,4 +1,4 @@
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 
 # GRPC dependencies
 http_archive(
@@ -21,4 +21,14 @@ http_archive(
   ],
   strip_prefix = "glog-0.4.0",
   sha256 = "f28359aeba12f30d73d9e4711ef356dc842886968112162bc73002645139c39c",
+)
+
+# json parsing library
+http_file(
+  name = "com_github_nlohmann_json_single_header",
+  downloaded_file_path="json.hpp",
+  urls = [
+    "https://github.com/nlohmann/json/releases/download/v3.7.0/json.hpp",
+  ],
+  sha256 = "a503214947952b69f0062f572cb74c17582a495767446347ce2e452963fc2ca4",
 )
